@@ -21,6 +21,12 @@
       }
     },
 
+    "ServerStorage": {
+      "Services": {
+        "$path": "Services"
+      }
+    },
+
     "StarterPlayer": {
       "$properties": {
         "EnableMouseLockOption": false

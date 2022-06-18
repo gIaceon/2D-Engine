@@ -14,7 +14,7 @@ local function App(props)
 			on = Gui.FadeIn;
 			off = Gui.FadeOut;
 			tilesize = 350;
-			color = Color3.fromRGB(43, 255, 138)
+			color = Color3.fromRGB(255, 43, 43)
 		});
 		Fade = Roact.createElement(props.Components.Fade, {
 

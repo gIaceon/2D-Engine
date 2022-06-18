@@ -275,10 +275,24 @@ function CharacterController:KnitStart()
 		self:SetCamState('Normal');
 
 		self.Dead = false;
+		self.CameraWorldZoom = 0;
+
+		local ReplicationService = Knit.GetService('ReplicationService');
+
+		if (ReplicationService and ReplicationService.RequestReplicate) then
+			self._janitor:Add(ReplicationService.RequestReplicate:Connect(function()
+				-- Wanted to keep it simple, so I just return the second value
+				-- in the tuple.
+				ReplicationService.ReplicateFinish:Fire(
+					select(2, pcall(function() 
+						local SmoothFacing = self.SpringRotate.Position;
+						return self.RootC0 * CFrame.Angles(0, 0, math.rad(SmoothFacing * 45));
+					end))
+				);
+			end), "Disconnect");
+		end;
 
 		Gui.FadeIn:Fire(.5);
-		self.CameraWorldZoom = 0;
-		
 		self.CharAdded:Fire(Char);
 	end;
 	
@@ -295,7 +309,7 @@ function CharacterController:KnitInit()
 	
 	self.SpringRotate = Spring.new(-1);
 	self.SpringRotate._speed = 35;
-	self.SpringRotate._damper = .7;
+	self.SpringRotate._damper = 1;
 	
 	local PlayerScripts = require(self.Player.PlayerScripts:WaitForChild('PlayerModule'));
 	local PlayerControls = PlayerScripts:GetControls();

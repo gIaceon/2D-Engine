@@ -24,7 +24,9 @@ function Check:render()
 			Size = UDim2.fromScale(1, 1),
 		}, {
 			uIGradient = Roact.createElement("UIGradient", {
-				Color = ColorSequence.new(self.state.color),
+				Color = self.colorstyles.color:map(function(val)
+                    return ColorSequence.new(val);
+                end),
 				Rotation = 270,
 				--Transparency = NumberSequence.new({
 				--	NumberSequenceKeypoint.new(self.state., 0),
@@ -80,8 +82,13 @@ function Check:init(props)
 	};
 	self:setState{
 		tilesize = props.tilesize;
-		color = props.color;
+		-- color = props.color;
 	};
+
+    self.colorstyles, self.colorapi = RoactSpring.Controller.new{
+        color = props.color;
+        config = RoactSpring.config.default;
+    };
 	
 	self.movestyle, self.moveapi = RoactSpring.Controller.new{
 		pos = UDim2.new(.5, 0, .5, 0);
@@ -115,6 +122,12 @@ function Check:didMount()
 				easing = RoactSpring.easings.easeInCubic;
 			};
 		};
+        self.colorapi:start {
+            color = Color3.fromRGB(43, 255, 138);
+            config = {
+                duration = duration / 2;
+            };
+        };
 	end), "Disconnect");
 	
 	self._janitor:Add(Gui.FadeOut:Connect(function(duration)
@@ -125,6 +138,12 @@ function Check:didMount()
 				easing = RoactSpring.easings.easeOutCubic;
 			};
 		};
+        self.colorapi:start {
+            color = Color3.fromRGB(255, 43, 43);
+            config = {
+                duration = duration / 2;
+            };
+        };
 	end), "Disconnect");
 	
 	self._janitor:Add(Char.OnDeath:Connect(function()
