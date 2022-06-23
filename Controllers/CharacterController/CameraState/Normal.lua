@@ -1,9 +1,13 @@
-local module = {}
-module.Name = script.Name;
+-- The default CameraState.
 
+--#region GLOBALS
 local CAMERA_DISTANCE_BACK = 50;
 local CAMERA_DISTANCE_LEFTRIGHT = 4;
 local CAMERA_UP = .75;
+--#endregion
+
+local module = {}
+module.Name = script.Name;
 
 local ReplicatedStorage = game:GetService('ReplicatedStorage');
 

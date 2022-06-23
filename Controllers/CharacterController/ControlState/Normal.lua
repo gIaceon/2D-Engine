@@ -1,3 +1,7 @@
+-- The default MoveState.
+
+
+--#region KEYBIND GLOBALS
 local KEYS_LEFT = {
 	Enum.KeyCode.A;
 	Enum.KeyCode.Left;
@@ -31,7 +35,9 @@ local KEYS_ACT = {
 	Enum.KeyCode.Q;
 	Enum.KeyCode.Z;
 };
+--#endregion
 
+--#region GLOBALS
 local IN_AIR_STATES = {
 	Enum.HumanoidStateType.Freefall;
 	Enum.HumanoidStateType.Dead;
@@ -41,20 +47,23 @@ local IN_AIR_STATES = {
 	Enum.HumanoidStateType.Swimming;
 };
 
-local CAM_UPD_DISTANCE = 2;
+local CAM_UPD_DISTANCE = 2; -- Distance the Camera changes when looking up/down
 
-local NORMAL_SPEED = 20;
-local MAX_SPEED = 40;
-local MAX_SPEED_NO_SPRINT = 30;
-local ADD_SPEED = .15;
-local FRICTION = .4;
+local NORMAL_SPEED = 20; -- Default walkspeed
+local MAX_SPEED = 40; -- Max speed while sprinting
+local MAX_SPEED_NO_SPRINT = 30; -- Max speed without sprinting
+local ADD_SPEED = .15; -- Speed added while walking per frame
+local FRICTION = .4; -- Speed decreased while not walking
+--#endregion
 
+--#region SERVICES AND REQUIRES
 local UIS = game:GetService('UserInputService');
 local CAS = game:GetService('ContextActionService');
 local ReplicatedStorage = game:GetService('ReplicatedStorage');
 
 local Knit = require(ReplicatedStorage.Packages:WaitForChild('Knit'));
 local Janitor = require(ReplicatedStorage.Packages.Janitor);
+--#endregion
 
 local module = {};
 module.Name = script.Name;
@@ -62,6 +71,7 @@ module.Name = script.Name;
 function module:Init()
 	local CharacterController = Knit.GetController('CharacterController');
 	
+	--#region STATE VARIABLES
 	self.MoveDirection = Vector3.new();
 	
 	self.IsLeft = false;
@@ -80,7 +90,9 @@ function module:Init()
 	
 	local CurrentState = CharacterController.Humanoid:GetState();
 	self.InAir = table.find(IN_AIR_STATES, CurrentState) ~= nil;
+	--#endregion
 	
+	--#region CONTROLS
 	CAS:BindAction('Left', function(_, state) 
 		if (state == Enum.UserInputState.Begin) then
 			self.IsLeft = true;
@@ -158,7 +170,9 @@ function module:Init()
 	-- 		self:Dive();
 	-- 	end;
 	-- end, false, unpack(KEYS_ACT));
-	
+	--#endregion
+
+	--#region EVENTS
 	self.StateChange = CharacterController.Humanoid.StateChanged:Connect(function(old, new)
 		if (table.find(IN_AIR_STATES, old) or new == Enum.HumanoidStateType.Running or new == Enum.HumanoidStateType.Landed) then
 			self.InAir = false;
@@ -175,47 +189,50 @@ function module:Init()
 			self.InAir = true;
 		end;
 	end);
-	
+	--#endregion
+
 	self:ExitMoveState();
 end;
 
-function module:Dive()
-	local Char = Knit.GetController('CharacterController');
+--#region UNUSED_MOVE
+-- function module:Dive()
+-- 	local Char = Knit.GetController('CharacterController');
 	
-	Char.Humanoid.Jump = true;
-	local Vel = Char:BodyVelocity{
-		Lifetime = .2;
-		MaxForce = Vector3.new(math.huge, math.huge, math.huge);
-		P = 1500;
-		Velocity = 
-			Vector3.new(0, 120, Char.Humanoid.WalkSpeed)
-			* Vector3.new(self.MoveDirection.X, 1, self.MoveDirection.X)
-	};
-	-- Char.SND:FindFirstChild('Audio/on2_leapjump'):Play();
-	Char:PlayAnimation('up', .05, 1, 1);
+-- 	Char.Humanoid.Jump = true;
+-- 	local Vel = Char:BodyVelocity{
+-- 		Lifetime = .2;
+-- 		MaxForce = Vector3.new(math.huge, math.huge, math.huge);
+-- 		P = 1500;
+-- 		Velocity = 
+-- 			Vector3.new(0, 120, Char.Humanoid.WalkSpeed)
+-- 			* Vector3.new(self.MoveDirection.X, 1, self.MoveDirection.X)
+-- 	};
+-- 	-- Char.SND:FindFirstChild('Audio/on2_leapjump'):Play();
+-- 	Char:PlayAnimation('up', .05, 1, 1);
 	
-	self._janitor:Add(task.spawn(function() 
-		while Vel do
-			Vel.Velocity = 
-				Vector3.new(0, 120, Char.Humanoid.WalkSpeed) 
-				* Vector3.new(0, 1, -self.MoveDirection.X);
-			task.wait();
-		end;
-	end), true, 'UpdVel');
+-- 	self._janitor:Add(task.spawn(function() 
+-- 		while Vel do
+-- 			Vel.Velocity = 
+-- 				Vector3.new(0, 120, Char.Humanoid.WalkSpeed) 
+-- 				* Vector3.new(0, 1, -self.MoveDirection.X);
+-- 			task.wait();
+-- 		end;
+-- 	end), true, 'UpdVel');
 	
-	self._janitor:Add(task.delay(.1, function() 
-		self._janitor:Add(Char.OnLand:Connect(function()
-			self._janitor:Remove('MoveFinished');
-			self._janitor:Remove('UpdVel');
-			Char._janitor:Remove('BodyVel');
-			self.Acting = false;
-			Char:StopAnimation('up');
-			Char.SND:FindFirstChild('Audio/on2_leapjump'):Stop();
-			Char.SND:FindFirstChild('button.wav'):Play();
-			self:ExitMoveState();
-		end), 'Disconnect', 'MoveFinished');
-	end), true);
-end;
+-- 	self._janitor:Add(task.delay(.1, function() 
+-- 		self._janitor:Add(Char.OnLand:Connect(function()
+-- 			self._janitor:Remove('MoveFinished');
+-- 			self._janitor:Remove('UpdVel');
+-- 			Char._janitor:Remove('BodyVel');
+-- 			self.Acting = false;
+-- 			Char:StopAnimation('up');
+-- 			Char.SND:FindFirstChild('Audio/on2_leapjump'):Stop();
+-- 			Char.SND:FindFirstChild('button.wav'):Play();
+-- 			self:ExitMoveState();
+-- 		end), 'Disconnect', 'MoveFinished');
+-- 	end), true);
+-- end;
+--#endregion
 
 function module:ExitMoveState()
 	local CharacterController = Knit.GetController('CharacterController');

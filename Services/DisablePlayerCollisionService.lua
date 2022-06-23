@@ -1,3 +1,5 @@
+-- This really is not a service. It's mostly just a wrapper to stop player collisions. 
+
 local ReplicatedStorage = game:GetService'ReplicatedStorage';
 
 local Knit = require(ReplicatedStorage.Packages.Knit);

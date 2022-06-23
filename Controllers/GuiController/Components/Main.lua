@@ -19,6 +19,9 @@ local function App(props)
 		Fade = Roact.createElement(props.Components.Fade, {
 
 		});
+		TextBox = Roact.createElement(props.Components.TextBox, {
+
+		});
 	});
 end;
 

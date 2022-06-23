@@ -111,7 +111,23 @@ return {
     -- SFX
     UI = {
         Click = {
-            Sound.new(12221976, .5, false)
+            Sound.new(12221976, .5, false);
+        };
+        Text = {
+            Sound.new(8549394881, .5, false);
+        };
+        ErrTalk = {
+            -- Sound.new(6861689542, .5, false);
+            -- Sound.new(5342465893, .5, false);
+            -- Sound.new(8549394881, .5, false);
+            -- Sound.new(3620844678, .5, false);
+            Sound.new(5640721576, 2, false);
+        };
+    };
+
+    SFX = {
+        Boing = {
+            Sound.new(9111926008, .5, false);
         };
     };
 };

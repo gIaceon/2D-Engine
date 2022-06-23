@@ -125,7 +125,7 @@ function SoundController:PlaySound(Name: string)
                 ParsedPath = ParsedPath[v];
                 continue;
             else
-                assert(i ~= 1, 'No valid Sound with group'..v);
+                assert(i ~= 1, 'No valid Sound with group '..v);
                 break;
             end;
         end;
