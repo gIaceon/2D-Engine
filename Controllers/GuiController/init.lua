@@ -13,6 +13,7 @@ local GuiController = Knit.CreateController {
 	HideAltText = Signal.new();
 	OnReadDialog = Signal.new();
 	HideDialog = Signal.new();
+	ShowCheckpoint = Signal.new();
 	
 	CanPresent = true;
 };

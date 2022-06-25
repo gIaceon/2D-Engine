@@ -22,6 +22,7 @@ local function App(props)
 		TextBox = Roact.createElement(props.Components.TextBox, {
 
 		});
+		Checkpoint = Roact.createElement(props.Components.Checkpoint, {})
 	});
 end;
 

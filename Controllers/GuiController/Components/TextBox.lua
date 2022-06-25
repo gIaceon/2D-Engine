@@ -178,7 +178,7 @@ function TextBox:didMount()
 				local grapheme = displayText:sub(first, last) 
 				index += 1
 
-				SoundController:PlaySound(Config.Sound);
+				SoundController:PlaySound(Config.Sound or 'UI.Text');
 
 				if grapheme ~= " " then
 					self.updMaxVisibleGrapheme(index);

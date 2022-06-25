@@ -74,6 +74,12 @@ function Sound.new(ID: number, Volume: number?, Looped: boolean?)
     self.Looped = Looped;
     self.Janitor = Janitor.new();
 
+    if (not SoundService:FindFirstChild('sfx')) then
+        local song = Instance.new('SoundGroup');
+        song.Name = 'sfx';
+        song.Parent = SoundService;
+    end;
+
     self:MakeInstance();
 
     return self;
@@ -87,7 +93,7 @@ function Sound:MakeInstance()
     Sound.Volume = self.Volume;
     Sound.SoundId = 'rbxassetid://'..tostring(self.ID);
     Sound.Looped = self.Looped == true;
-    Sound.SoundGroup = game:GetService('SoundService'):WaitForChild('sound');
+    Sound.SoundGroup = game:GetService('SoundService'):WaitForChild('sfx');
     Sound.Name = HttpService:GenerateGUID();
     Sound.Parent = workspace;
 
@@ -117,12 +123,11 @@ return {
             Sound.new(8549394881, .5, false);
         };
         ErrTalk = {
-            -- Sound.new(6861689542, .5, false);
-            -- Sound.new(5342465893, .5, false);
-            -- Sound.new(8549394881, .5, false);
-            -- Sound.new(3620844678, .5, false);
             Sound.new(5640721576, 2, false);
         };
+        Tada = {
+            Sound.new(8204799453, 1, false);
+        }
     };
 
     SFX = {

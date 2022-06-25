@@ -46,7 +46,7 @@ function UpInteractZone:Activate()
 				'This is the <b>UpInteractZone</b> component. You can add functions in the component file in <b>StarterPlayer/StartPlayerScripts/Client/Components/UpInteractZone</b>!',
 				{
 					Speed = 2;
-					Sound = 'UI.ErrTalk';
+					-- Sound = 'UI.ErrTalk';
 				}
 			);
         end;
@@ -57,7 +57,7 @@ function UpInteractZone:Activate()
 				string.format('No case %q', tostring(self.Instance:GetAttribute('OnUp'))),
 				{
 					Speed = 2;
-					Sound = 'UI.ErrTalk';
+					-- Sound = 'UI.ErrTalk';
 				}
 			);
 		end;
