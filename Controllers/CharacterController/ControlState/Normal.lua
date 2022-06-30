@@ -14,6 +14,7 @@ local KEYS_RIGHT = {
 
 local KEYS_JUMP = {
 	Enum.KeyCode.Space;
+	Enum.KeyCode.ButtonA;
 };
 
 local KEYS_UP = {
@@ -29,6 +30,8 @@ local KEYS_DOWN = {
 local KEYS_RUN = {
 	Enum.KeyCode.LeftShift;
 	Enum.KeyCode.RightShift;
+	Enum.KeyCode.ButtonB;
+	Enum.KeyCode.ButtonX;
 };
 
 local KEYS_ACT = {
@@ -54,6 +57,8 @@ local MAX_SPEED = 40; -- Max speed while sprinting
 local MAX_SPEED_NO_SPRINT = 30; -- Max speed without sprinting
 local ADD_SPEED = .15; -- Speed added while walking per frame
 local FRICTION = .4; -- Speed decreased while not walking
+
+local DEADZONE = .2;
 --#endregion
 
 --#region SERVICES AND REQUIRES
@@ -85,6 +90,8 @@ function module:Init()
 	
 	self.CurrentMomentum = NORMAL_SPEED;
 	self.SlidePower = 0;
+
+	self._lastControllerVector = Vector3.new();
 	
 	self._janitor = Janitor.new();
 	
@@ -164,12 +171,53 @@ function module:Init()
 		end;
 	end, false, table.unpack(KEYS_RUN));
 	
-	-- CAS:BindAction('Act', function(_, state)
-	-- 	if (state == Enum.UserInputState.Begin and not self.Acting) then
-	-- 		self.Acting = true;
-	-- 		self:Dive();
-	-- 	end;
-	-- end, false, unpack(KEYS_ACT));
+	CAS:BindActionAtPriority(
+		"moveThumbstick", 
+		function(_, inputState, inputObject)
+			local function DisabledControls()
+				self.IsDown = false;
+				self.IsUp = false;
+				self.IsLeft = false;
+				self.IsRight = false;
+
+				CharacterController.CrouchedBeforeLand = false;
+
+				CharacterController.UpDownChanged:Fire(self.IsUp, self.IsDown);
+			end;
+	
+			if (inputState == Enum.UserInputState.Cancel) then
+				DisabledControls();
+				return Enum.ContextActionResult.Sink;
+			end;
+	
+			if inputObject.KeyCode ~= Enum.KeyCode.Thumbstick1 then return end;
+	
+			if (inputObject.Position.magnitude > DEADZONE) then
+				-- print(inputObject.Position);
+				local X, Y, Z = inputObject.Position.X, inputObject.Position.Y, inputObject.Position.Z;
+				self.IsLeft = X < -DEADZONE;
+				self.IsRight = X > DEADZONE;
+				
+				if (not self.InAir) then
+					self.IsUp = Y > .5;
+					self.IsDown = Y < -.5;
+
+					if (not self.IsDown) then
+						CharacterController.CrouchedBeforeLand = false;
+					end;
+					
+					CharacterController.UpDownChanged:Fire(self.IsUp, self.IsDown);
+				end;
+			else
+				DisabledControls();
+			end;
+	
+			return Enum.ContextActionResult.Sink;
+		end, 
+		false,
+		Enum.ContextActionPriority.High.Value, 
+		Enum.KeyCode.Thumbstick1
+	);
 	--#endregion
 
 	--#region EVENTS
