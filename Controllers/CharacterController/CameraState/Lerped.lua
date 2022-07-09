@@ -1,4 +1,14 @@
--- A camerastate which allows you to lerp the direction of the camera.
+--[[
+
+	A CameraState which allows you to lerp the direction of the camera.
+
+	HOW TO USE:
+	The starting place has 4 points already made for you.
+	To make more, simply duplicate (Ctrl+D) the point and rename it to the next number (ex. Point5)
+	Then to change the Camera Direction it goes to, change the CameraDir attribute.
+
+	If you do not have any points, this will behave like the Normal CameraState.
+]]--
 
 --#region GLOBALS
 local CAMERA_DISTANCE_BACK = 50;
