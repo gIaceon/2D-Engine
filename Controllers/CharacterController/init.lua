@@ -1,5 +1,6 @@
 local CAMERA_DISTANCE_BACK = 50;
 local CAMERA_DISTANCE_LEFTRIGHT = 10;
+local CAMERA_DEFAULT_TYPE = 'Lerped';
 
 type MoveState = {
 	Init: (self: MoveState) -> ();
@@ -101,7 +102,7 @@ function CharacterController:OnFrame(dt)
 	local SmoothFacing = self.SpringRotate.Position;
 	
 	self.Root.RootJoint.C0 = self.RootC0 * CFrame.Angles(0, 0, math.rad(SmoothFacing * 45));
-	self.Humanoid:Move(MoveDir, true);
+	self.Humanoid:Move(Vector3.new(0, 0, -MoveDir.X), false);
 
 	self.Root.Orientation = Vector3.new(0, if (Facing == 1) then 180 else 0, 0);
 	self.Root.Position = Vector3.new(self.Root:GetAttribute('Axis') or 0, self.Root.Position.Y, self.Root.Position.Z);
@@ -272,7 +273,7 @@ function CharacterController:KnitStart()
 		self.Root.Anchored = false;
 
 		self:SetState('Normal');
-		self:SetCamState('Normal');
+		self:SetCamState(CAMERA_DEFAULT_TYPE);
 
 		self.Dead = false;
 		self.CameraWorldZoom = 0;
