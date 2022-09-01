@@ -79,7 +79,7 @@ function CharacterController:OnFrame(dt)
 	local CameraCF = LastValidCameraCF or self.Camera.CFrame;
 	local CamState: CameraState = self.CamState;
 	if (CamState) then
-		pcall(function() -- shitty hack
+		pcall(function() -- bad hack
 			CameraCF = CamState:Step(self);
 		end);
 		if (not CameraCF) then
